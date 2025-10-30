@@ -24,17 +24,21 @@ jobs:
       - name: Show details
         run: |
           echo "Event: ${{ github.event_name }}"
-          echo "source: ${{ github.event.pull_request.head.ref }}"
-          echo "target: ${{ github.event.pull_request.base.ref }}"
+          echo "source branch: ${{ github.event.pull_request.head.ref }}"
+          echo "target branch: ${{ github.event.pull_request.base.ref }}"
+          echo "job.environment: ${{ job.environment }}"
           echo "Target ENV: $TARGET_ENV"
+
       
       - name: Pipeline for env
         run: |
           if [ "${{ job.environment }}" = "prod" ]; then
             echo "Merge to prod, triggering dev build first"
+            echo "build steps..."
           elif [ "${{ job.environment }}" = "dev" ]; then
             echo "Merge to dev, triggering deb build"
+            echo "build steps..."
           else
-            echo: "Unknown environment"
+            echo "Unknown environment"
             exit 1
           fi
