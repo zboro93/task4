@@ -9,15 +9,12 @@ jobs:
   if_merged:
     if: ${{ github.event_name == 'pull_request' && github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
-    environment: ${{ 
-      github.event_name == 'pull_request' && (
-        github.event.pull_request.base.ref == 'main' ? 'prod' ||
-        github.event.pull_request.base.ref == 'dev'  ? 'dev' ||
-        'unknown'
-      ) || 'unknown'
-      }}
     env:
-      TARGET_ENV: ${{ github.event.pull_request.base.ref }}
+      TARGET_ENV: ${{
+        github.event.pull_request.base.ref == 'main' && 'prod' ||
+        github.event.pull_request.base.ref == 'dev' && 'dev' ||
+        'unknown'
+        }}
    
     steps:
       - name: Checkout
@@ -28,19 +25,17 @@ jobs:
           echo "Event: ${{ github.event_name }}"
           echo "source branch: ${{ github.event.pull_request.head.ref }}"
           echo "target branch: ${{ github.event.pull_request.base.ref }}"
-          echo "job.environment: ${{ job.environment }}"
           echo "Target ENV: $TARGET_ENV"
 
-      
-      # - name: Pipeline for env
-        # run: |
-          # if [ "${{ job.environment }}" = "prod" ]; then
-            # echo "Merge to prod, triggering dev build first"
-            # echo "build steps..."
-          # elif [ "${{ job.environment }}" = "dev" ]; then
-            # echo "Merge to dev, triggering deb build"
-            # echo "build steps..."
-          # else
-            # echo "Unknown environment"
-            # exit 1
-          # fi
+      - name: Pipeline for env
+        run: |
+          if [ "$TARGET_ENV" = "prod" ]; then
+            echo "Merge to prod, triggering dev build first"
+            echo "build steps..."
+          elif [ "$TARGET_ENV" = "dev" ]; then
+            echo "Merge to dev, triggering deb build"
+            echo "build steps..."
+          else
+            echo "Unknown environment"
+            exit 1
+          fi
