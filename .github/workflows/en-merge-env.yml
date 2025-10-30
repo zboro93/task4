@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ 
       github.event_name == 'pull_request' && (
-        github.event.pull_request.base.ref == 'main' ? 'prod' :
-        github.event.pull_request.base.ref == 'dev'  ? 'dev' :
+        github.event.pull_request.base.ref == 'main' ? 'prod' ||
+        github.event.pull_request.base.ref == 'dev'  ? 'dev' ||
         'unknown'
       ) || 'unknown'
-    }}
+      }}
     env:
       TARGET_ENV: ${{ github.event.pull_request.base.ref }}
    
