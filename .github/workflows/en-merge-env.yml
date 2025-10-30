@@ -30,11 +30,13 @@ jobs:
       - name: Pipeline for env
         run: |
           if [ "$TARGET_ENV" = "prod" ]; then
-            echo "Merge to prod, triggering dev build first"
+            echo "Merge to PROD, triggering DEV build first"
             echo "build steps..."
+            echo "terraform apply... docker build..."
           elif [ "$TARGET_ENV" = "dev" ]; then
-            echo "Merge to dev, triggering deb build"
+            echo "Merge to DEV, triggering DEV build"
             echo "build steps..."
+            echo "terraform apply... docker build..."
           else
             echo "Unknown environment"
             exit 1
