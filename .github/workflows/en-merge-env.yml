@@ -1,0 +1,41 @@
+on:
+  pull_request:
+    types: [closed]
+    branches:  
+      - main
+      - dev
+ 
+  jobs:
+    if_merged:
+      if: ${{ github.event.pull_request.merged == true }}
+      runs-on: ubuntu-latest
+      environment: ${{
+        github.event.pull_request.base.ref == 'main' && 'prod' ||
+        github.event.pull_request.base.ref == 'dev' && 'dev'
+      }}
+      env:
+        TARGET_ENV: ${{
+          github.event_name == 'pull_request' && github.event.pull_request.base.ref
+        }}
+     
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4
+         
+       - name: Show details:
+         run: |
+           echo "Event: ${{ github.event_name }}"
+           echo "source: ${{ github.event.pull_request.head.ref }}"
+           echo "target: ${{ github.event.pull_request.base.ref }}"
+           echo "Target ENV: $TARGET_ENV"
+       
+       - name: Pipeline for env
+         run: |
+           if [ "${{ job.environment }}" = "prod" ]; then
+             echo "Merge to prod, triggering dev build first"
+           elif [ "${{ job.environment }}" = "dev" ]; then
+             echo "Merge to dev, triggering deb build"
+           else
+             echo: "Unknown environment"
+             exit 1
+           fi
