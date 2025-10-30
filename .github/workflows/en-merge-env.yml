@@ -13,7 +13,7 @@ on:
         github.event.pull_request.base.ref == 'main' && 'prod' ||
         github.event.pull_request.base.ref == 'dev' && 'dev' ||
         'unknown'
-        }}
+      }}
       env:
         TARGET_ENV: ${{ github.event.pull_request.base.ref }}
      
@@ -21,7 +21,7 @@ on:
         - name: Checkout
           uses: actions/checkout@v4
           
-        - name: Show details:
+        - name: Show details
           run: |
             echo "Event: ${{ github.event_name }}"
             echo "source: ${{ github.event.pull_request.head.ref }}"
